@@ -1,7 +1,9 @@
 package fr.mguigourez.projet_application;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -35,6 +37,18 @@ public class MainActivity extends AppCompatActivity {
         this.nombreR.setMax(150);
         this.nombreR.setOnSeekBarChangeListener(new BarNombrePagesListener(this.affichageR));
 
+
+
+
+
+        /* -------------------  BOUTON SEARCH => SecondActivity   //TODO Faire fonctionner ! ----------------------- */
+        this.search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent resultats = new Intent(getApplicationContext(),SecondActivity.class);
+                startActivity(resultats);
+            }
+        });
 
 
     }
