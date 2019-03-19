@@ -8,13 +8,15 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import fr.mguigourez.projet_application.Listeners.BarNombrePagesListener;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText studio;
     private EditText date;
     private Spinner genre;
-    private SeekBar nombreP;
-    private TextView affichageP;
+    private SeekBar nombreR;
+    private TextView affichageR;
     private ImageButton search;
 
     @Override
@@ -25,9 +27,13 @@ public class MainActivity extends AppCompatActivity {
         this.studio = findViewById(R.id.studio);
         this.date = findViewById(R.id.date);
         this.genre = findViewById(R.id.genre);
-        this.nombreP = findViewById(R.id.nombre_pages);
-        this.affichageP = findViewById(R.id.affichage_pages);
+        this.nombreR = findViewById(R.id.nombre_resultats);
+        this.affichageR = findViewById(R.id.affichage_resultats);
         this.search = findViewById(R.id.recherche);
+
+
+        this.nombreR.setMax(150);
+        this.nombreR.setOnSeekBarChangeListener(new BarNombrePagesListener(this.affichageR));
 
 
 

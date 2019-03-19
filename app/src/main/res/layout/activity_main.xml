@@ -103,7 +103,7 @@
         app:layout_constraintTop_toBottomOf="@+id/Genretext" />
 
     <SeekBar
-        android:id="@+id/nombre_pages"
+        android:id="@+id/nombre_resultats"
         android:layout_width="178dp"
         android:layout_height="32dp"
         android:layout_marginStart="36dp"
@@ -127,7 +127,7 @@
         app:srcCompat="@drawable/search" />
 
     <TextView
-        android:id="@+id/affichage_pages"
+        android:id="@+id/affichage_resultats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -135,6 +135,6 @@
         android:layout_marginRight="128dp"
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nombre_pages" />
+        app:layout_constraintTop_toBottomOf="@+id/nombre_resultats" />
 
 </android.support.constraint.ConstraintLayout>
