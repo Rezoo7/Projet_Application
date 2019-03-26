@@ -2,8 +2,6 @@ package fr.mguigourez.projet_application;
 
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
-        import android.widget.EditText;
-        import android.widget.ImageButton;
         import android.widget.LinearLayout;
         import android.widget.SeekBar;
         import android.widget.Spinner;
@@ -29,7 +27,5 @@ public class SecondActivity extends AppCompatActivity {
             layout.addView(text);
 
         }
-
-
     }
 }
