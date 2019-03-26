@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* -------------------  GET DATA ----------------------- */ //TODO
 
-        /************** GENRE **************/
+        /************** GENRE *************/
 
         final Context c = this;
 
