@@ -91,7 +91,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="40dp"
         android:text="Nombre :"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -99,12 +99,25 @@
 
     <SeekBar
         android:id="@+id/nombre_resultats"
-        android:layout_width="170dp"
+        android:layout_width="150dp"
         android:layout_height="40dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginLeft="45dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
         android:layout_marginTop="40dp"
         app:layout_constraintStart_toEndOf="@+id/Nombretext"
+        app:layout_constraintTop_toBottomOf="@+id/genre" />
+
+    <TextView
+        android:id="@+id/affichage_resultats"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="40dp"
+        android:text="0"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nombre_resultats"
         app:layout_constraintTop_toBottomOf="@+id/genre" />
 
     <ImageButton
@@ -120,18 +133,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/affichage_resultats"
+        app:layout_constraintTop_toBottomOf="@+id/nombre_resultats"
         app:srcCompat="@drawable/search" />
-
-    <TextView
-        android:id="@+id/affichage_resultats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginRight="128dp"
-        android:text=""
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nombre_resultats" />
 
 </android.support.constraint.ConstraintLayout>
