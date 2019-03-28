@@ -2,9 +2,8 @@ package fr.mguigourez.projet_application;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -60,27 +59,28 @@ public class MainActivity extends AppCompatActivity {
         Ion.with(this)
                 .load("https://api.themoviedb.org/3/genre/movie/list?api_key=d9d52bd9b5ead14f7d1feb2111e99354")
                 .asJsonObject()
-                .setCallback(new FutureCallback<JSONObject>() {
+                .setCallback(new FutureCallback<JsonObject>() {
                     @Override
-                    public void onCompleted(Exception e, JSONObject result) {
+                    public void onCompleted(Exception e, JsonObject result) {
 
                         List<String> list = new ArrayList<>();
 
                         try {
-                            JSONObject g;
-                            g = result.getJSONObject("genre");
-                            String s;
-                            for( int i = 0; i < g.length(); i++ ){
-                                s = g[i].getString("name");
-                                list.add( s );
+
+                            JSONObject reader = new JSONObject(result.toString());
+                            JSONArray genres  = reader.getJSONArray("genres");
+                            for( int i = 0; i < genres.length(); i++ ) {
+                                JSONObject json = genres.getJSONObject(i);
+                                list.add( json.getString("name"));
                             }
+
+                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list);
+                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            genre.setAdapter(dataAdapter);
+
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
-
-                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list);
-                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        genre.setAdapter(dataAdapter);
                     }
                 });
 
