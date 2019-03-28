@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -27,7 +28,7 @@ import fr.mguigourez.projet_application.Listeners.BarNombrePagesListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText studio;
+    private AutoCompleteTextView studio;
     private EditText date;
     private Spinner genre;
     private SeekBar nombreR;
@@ -52,11 +53,41 @@ public class MainActivity extends AppCompatActivity {
 
         /* -------------------  GET DATA ----------------------- */ //TODO
 
-        /************** GENRE *************/
-
         final Context c = this;
 
-        Ion.with(this)
+        /************** STUDIO *************/
+
+        final String[] STUDIO = new String[]{
+                "Warner Bros",
+                "Sony Pictures Motion Picture Group",
+                "Walt Disney Studios",
+                "Universal Pictures",
+                "20th Century Fox",
+                "Paramount Pictures",
+                "Lionsgate Films",
+                "The Weinstein Company",
+                "Paramount Pictures Corporation",
+                "MTV Films",
+                "DC Entertainment",
+                "New Line Cinema",
+                "Home Box Office",
+                "Castle Rock Entertainment",
+                "Blue Sky Studios Inc.",
+                "Columbia Pictures",
+                "Screen Gems",
+                "TriStar",
+                "Pixar Animation Studios",
+                "Marvel Entertainment",
+                "Lucasfilm Limited",
+        };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, STUDIO);
+        studio.setAdapter(adapter);
+
+
+        /************** GENRE *************/
+
+        Ion.with(c)
                 .load("https://api.themoviedb.org/3/genre/movie/list?api_key=d9d52bd9b5ead14f7d1feb2111e99354")
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
@@ -68,10 +99,10 @@ public class MainActivity extends AppCompatActivity {
                         try {
 
                             JSONObject reader = new JSONObject(result.toString());
-                            JSONArray genres  = reader.getJSONArray("genres");
-                            for( int i = 0; i < genres.length(); i++ ) {
+                            JSONArray genres = reader.getJSONArray("genres");
+                            for (int i = 0; i < genres.length(); i++) {
                                 JSONObject json = genres.getJSONObject(i);
-                                list.add( json.getString("name"));
+                                list.add(json.getString("name"));
                             }
 
                             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list);
@@ -89,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         this.search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent resultats = new Intent(getApplicationContext(),SecondActivity.class);
+                Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
                 startActivity(resultats);
             }
         });
