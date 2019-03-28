@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -29,7 +28,7 @@ import fr.mguigourez.projet_application.Listeners.BarNombrePagesListener;
 public class MainActivity extends AppCompatActivity {
 
     private AutoCompleteTextView studio;
-    private EditText date;
+    private Spinner date;
     private Spinner genre;
     private SeekBar nombreR;
     private TextView affichageR;
@@ -46,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         this.nombreR = findViewById(R.id.nombre_resultats);
         this.affichageR = findViewById(R.id.affichage_resultats);
         this.search = findViewById(R.id.recherche);
-
 
         this.nombreR.setMax(150);
         this.nombreR.setOnSeekBarChangeListener(new BarNombrePagesListener(this.affichageR));
@@ -84,6 +82,17 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, STUDIO);
         studio.setAdapter(adapter);
 
+        /************** DATE *************/
+
+        List<String> list = new ArrayList<>();
+
+        for (int i = 2019; i > 1950; i--) {
+            list.add(String.valueOf(i));
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        date.setAdapter(dataAdapter);
 
         /************** GENRE *************/
 
