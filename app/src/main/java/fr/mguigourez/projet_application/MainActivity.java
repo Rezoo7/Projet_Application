@@ -116,13 +116,9 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject reader = new JSONObject(result.toString());
                             JSONArray genres = reader.getJSONArray("genres");
 
-                            // listGenres = new String[genres.length()][2];
-
                             for (int i = 0; i < genres.length(); i++) {
                                 JSONObject json = genres.getJSONObject(i);
                                 list.add(json.getString("name"));
-                                /*listGenres[i][0] = String.valueOf(json.getInt("id"));
-                                listGenres[i][1] = json.getString("name");*/
                             }
 
                             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list);

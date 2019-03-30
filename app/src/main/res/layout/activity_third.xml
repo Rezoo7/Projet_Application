@@ -46,8 +46,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/empty" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 
@@ -105,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="Note :"
                 android:textSize="25sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -120,6 +119,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
+                android:isIndicator="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/note" />
@@ -137,31 +137,31 @@
                 app:layout_constraintTop_toBottomOf="@+id/rating" />
 
             <TextView
-                android:id="@+id/réalisateur"
+                android:id="@+id/studio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
-                android:text="Réalisateur :"
+                android:text="Studio :"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/details" />
 
             <TextView
-                android:id="@+id/nom_realisateur"
+                android:id="@+id/nom_studio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:text="Nom réalisateur"
+                android:text=""
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/réalisateur"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/réalisateur"
-                app:layout_constraintTop_toTopOf="@+id/réalisateur" />
+                app:layout_constraintStart_toEndOf="@+id/studio"
+                app:layout_constraintTop_toBottomOf="@+id/details" />
 
             <TextView
                 android:id="@+id/date_sortie"
@@ -173,7 +173,7 @@
                 android:text="Date de sortie :"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/réalisateur" />
+                app:layout_constraintTop_toBottomOf="@+id/nom_studio" />
 
             <TextView
                 android:id="@+id/date_film"
@@ -181,14 +181,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:text="Date"
+                android:text=""
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/date_sortie"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/date_sortie"
-                app:layout_constraintTop_toTopOf="@+id/date_sortie" />
+                app:layout_constraintTop_toBottomOf="@+id/nom_studio" />
 
             <TextView
                 android:id="@+id/genre"
@@ -210,9 +210,10 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:text="Genres"
+                android:layout_marginBottom="8dp"
+                android:text=""
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/genre"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.49"
                 app:layout_constraintStart_toEndOf="@+id/genre"
