@@ -32,6 +32,21 @@ public class SecondActivity extends AppCompatActivity {
 
         this.listeWithScroll.addView(bouton_tmp);
 
+        Intent intent = getIntent();
+
+        boolean extras_ok = intent.hasExtra("studio")
+                && intent.hasExtra("date")
+                && intent.hasExtra("genre")
+                && intent.hasExtra("nombre");
+
+        if(intent != null){
+            if(extras_ok){
+               // for(){
+
+               // }
+            }
+        }
+
 
 
 
