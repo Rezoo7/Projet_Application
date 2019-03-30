@@ -24,7 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import fr.mguigourez.projet_application.Listeners.BarNombrePagesListener;
@@ -37,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar nombreR;
     private TextView affichageR;
     private ImageButton search;
-
-    private String[][] listGenres;
-    private String[][] listMovies;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -62,56 +58,6 @@ public class MainActivity extends AppCompatActivity {
         /************** INITIALISATION *************/
 
         final Context c = this;
-        listMovies = new String[950][14];
-
-        /************** MOVIES *************/
-
-        for (int i = 0; i < 50; i++) {
-            Ion.with(c)
-                    .load("https://api.themoviedb.org/3/movie/popular?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=" + i)
-                    .asJsonObject()
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-
-                            try {
-
-                                JSONObject reader = new JSONObject(result.toString());
-                                if (reader.has("results")) {
-
-                                    JSONArray movies = reader.getJSONArray("results");
-
-                                    for (int j = 0; j < movies.length(); j++) {
-
-                                        JSONObject json = movies.getJSONObject(j);
-                                        /*listMovies[i*j][0] = json.getString("vote_count");
-                                        listMovies[i*j][1] = String.valueOf(json.getInt("id"));
-                                        listMovies[i*j][2] = String.valueOf(json.getBoolean("video"));
-                                        listMovies[i*j][3] = String.valueOf(json.getDouble("vote_average"));
-                                        listMovies[i*j][4] =json.getString("title");
-                                        listMovies[i*j][5] = String.valueOf(json.getDouble("popularity"));
-                                        listMovies[i*j][6] = json.getString("poster_path");
-                                        listMovies[i*j][7] = json.getString("original_language");
-                                        listMovies[i*j][8] = json.getString("original_title");
-                                        listMovies[i*j][9] = String.valueOf(json.getJSONArray("genre_ids"));
-                                        listMovies[i*j][10] = json.getString("backdrop_path");
-                                        listMovies[i*j][11] = String.valueOf(json.getBoolean("adult"));
-                                        listMovies[i*j][12] = json.getString("overview");
-                                        listMovies[i*j][13] = json.getString("release_date");*/
-
-                                    }
-
-                                }
-
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                    });
-        }
-
-        Log.d("DATA", Arrays.toString(listMovies[0]));
-
 
         /************** STUDIO *************/
 
