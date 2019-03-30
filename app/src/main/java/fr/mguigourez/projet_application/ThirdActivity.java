@@ -1,6 +1,7 @@
 package fr.mguigourez.projet_application;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -41,12 +42,15 @@ public class ThirdActivity extends AppCompatActivity {
         /************** INITIALISATION *************/
 
         final Context c = this;
-        final String id = "200";
+
+        Intent intent = getIntent();
+
+        final int id = intent.getIntExtra("film", 0 );
 
         /************** DATAS *************/
 
         Ion.with(c)
-                .load("https://api.themoviedb.org/3/movie/" + id + "?api_key=d9d52bd9b5ead14f7d1feb2111e99354")
+                .load("https://api.themoviedb.org/3/movie/" + String.valueOf(id) + "?api_key=d9d52bd9b5ead14f7d1feb2111e99354")
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override

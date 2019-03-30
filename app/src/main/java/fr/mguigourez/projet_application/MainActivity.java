@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -24,7 +23,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.mguigourez.projet_application.Listeners.BarNombrePagesListener;
 
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private Spinner genre;
     private SeekBar nombreR;
     private TextView affichageR;
-    private ImageButton search;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         this.genre = findViewById(R.id.genre);
         this.nombreR = findViewById(R.id.nombre_resultats);
         this.affichageR = findViewById(R.id.affichage_resultats);
-        this.search = findViewById(R.id.recherche);
+        final ImageButton search = findViewById(R.id.recherche);
 
         this.nombreR.setMax(150);
         this.nombreR.setOnSeekBarChangeListener(new BarNombrePagesListener(this.affichageR));
@@ -109,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
 
-                        List<String> list = new ArrayList<>();
+                        List<String> list_genre = new ArrayList<>();
+                        Map<String, Integer> map = new HashMap<>();
 
                         try {
 
@@ -118,50 +119,42 @@ public class MainActivity extends AppCompatActivity {
 
                             for (int i = 0; i < genres.length(); i++) {
                                 JSONObject json = genres.getJSONObject(i);
-                                list.add(json.getString("name"));
+                                list_genre.add(json.getString("name"));
+                                map.put( json.getString("name"), json.getInt("id") );
                             }
 
-                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list);
+                            final Map<String, Integer> finalMap = map;
+
+                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list_genre);
                             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             genre.setAdapter(dataAdapter);
+
+                            search.setOnClickListener(new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+
+                                    String stu = studio.getText().toString();
+                                    String da = date.getSelectedItem().toString();
+                                    String gen = genre.getSelectedItem().toString();
+                                    int nb = nombreR.getProgress();
+
+                                    Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
+                                    resultats.putExtra("studio", stu);
+                                    resultats.putExtra("date", da);
+                                    resultats.putExtra("genre", finalMap.get(gen) );
+                                    resultats.putExtra("nombre", nb);
+                                    startActivity(resultats);
+
+                                }
+
+                            });
 
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
                 });
-
-        this.search.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                String stu = studio.getText().toString();
-
-                if (!stu.matches("")) {
-
-
-                    String da = date.getSelectedItem().toString();
-                    String gen = genre.getSelectedItem().toString();
-                    int nb = nombreR.getProgress();
-
-                    Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
-                    resultats.putExtra("studio",stu);
-                    resultats.putExtra("date",da);
-                    resultats.putExtra("genre",gen);
-                    resultats.putExtra("nombre",nb);
-                    startActivity(resultats);
-
-
-                } else {
-                    Log.d("DATA", "null" );
-                }
-
-
-            }
-
-        });
-
 
     }
 }
