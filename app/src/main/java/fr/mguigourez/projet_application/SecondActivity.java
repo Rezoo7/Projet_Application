@@ -69,7 +69,7 @@ public class SecondActivity extends AppCompatActivity {
                                 String date = json.getString("release_date");
                                 String year = date.replaceAll("-\\d{2}-\\d{2}", "");
 
-                                if (Integer.valueOf(year) <= Integer.valueOf(date_sortie)) {
+                                if (Integer.valueOf(year) >= Integer.valueOf(date_sortie)) {
                                     if (bool_genre) {
 
                                         map.put(json.getString("title"), json.getInt("id"));
