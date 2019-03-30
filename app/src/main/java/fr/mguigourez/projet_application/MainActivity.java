@@ -189,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        /* -------------------  BOUTON SEARCH => SecondActivity   //TODO Faire fonctionner ! ----------------------- */
         this.search.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -202,13 +201,21 @@ public class MainActivity extends AppCompatActivity {
 
                     String da = date.getSelectedItem().toString();
                     String gen = genre.getSelectedItem().toString();
-                    // String nb = affichageR.getText().toString();
+                    int nb = nombreR.getProgress();
+
+                    Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
+                    resultats.putExtra("studio",stu);
+                    resultats.putExtra("date",da);
+                    resultats.putExtra("genre",gen);
+                    resultats.putExtra("nombre",nb);
+                    startActivity(resultats);
+
+
                 } else {
                     Log.d("DATA", "null" );
                 }
 
-                Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
-                startActivity(resultats);
+
             }
 
         });

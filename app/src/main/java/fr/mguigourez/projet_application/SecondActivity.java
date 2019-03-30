@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,22 +19,23 @@ public class SecondActivity extends AppCompatActivity {
 
         this.listeWithScroll = findViewById(R.id.liste);
 
-        for (int i = 0; i < 50; i++) {
+        Button bouton_tmp = new Button(this);
+        bouton_tmp.setText("Troisième => ");
 
-            TextView ProgrammaticallyTextView = new TextView(this);
-            ProgrammaticallyTextView.setText(" Liste " + i);
-            ProgrammaticallyTextView.setTextSize(25);
-
-            this.listeWithScroll.addView(ProgrammaticallyTextView);
-
-            ProgrammaticallyTextView.setOnClickListener(new View.OnClickListener() {
+        bouton_tmp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent details = new Intent(getApplicationContext(), ThirdActivity.class);
                     startActivity(details);
                 }
             });
-        }
+
+        this.listeWithScroll.addView(bouton_tmp);
+
+
+
+
+
 
     }
 }
