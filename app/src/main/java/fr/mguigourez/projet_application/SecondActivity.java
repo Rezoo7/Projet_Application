@@ -38,93 +38,112 @@ public class SecondActivity extends AppCompatActivity {
         /************** INITIALISATION *************/
 
         final Context c = this;
-        int page = 0;
-        int nbr = 0;
+        final int finalNbr = 0;
+        final int finalPage = 1;
 
-        while( nbr < nombre_resultat ) {
+        new Thread(new Runnable() {
 
-            page++;
+            public void run() {
 
-            JsonObject result = null;
+                int nbr = finalNbr;
+                int page = finalPage;
 
-            try {
-                result = Ion.with(c)
-                        .load("https://api.themoviedb.org/3/movie/popular?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=" + page)
-                        .asJsonObject()
-                        .get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                while( nbr < nombre_resultat ) {
 
-            boolean bool_genre = false;
-            final Map<String, Integer> map = new HashMap<>();
+                    page++;
 
-            try {
-                JSONObject reader = new JSONObject(result.toString());
-                JSONArray resultats = reader.getJSONArray("results");
+                    JsonObject result = null;
 
-                for (int j = 0; j < resultats.length(); j++) {
-                    final JSONObject json = resultats.getJSONObject(j);
-
-                    if (nbr < nombre_resultat) {
-
-                        JSONArray genres = json.getJSONArray("genre_ids");
-
-                        for (int k = 0; k < genres.length(); k++) {
-                            int id = genres.getInt(k);
-                            if (genre_film == id) {
-                                bool_genre = true;
-                            }
-                        }
-
-                        String date = json.getString("release_date");
-                        String year = date.replaceAll("-\\d{2}-\\d{2}", "");
-
-                        if (Integer.valueOf(year).equals(Integer.valueOf(date_sortie))) {
-                            if (bool_genre) {
-
-                                map.put(json.getString("title"), json.getInt("id"));
-
-                                final TextView film_tmp = new TextView(c);
-                                film_tmp.setText(json.getString("title"));
-                                film_tmp.setPadding(10, 40, 0, 0);
-                                film_tmp.setTextSize(30);
-
-                                nbr++;
-
-                                film_tmp.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        try {
-                                            Intent details = new Intent(getApplicationContext(), ThirdActivity.class);
-                                            details.putExtra("film", map.get(json.getString("title")));
-                                            startActivity(details);
-
-                                        } catch (JSONException e1) {
-                                            e1.printStackTrace();
-                                        }
-                                    }
-                                });
-
-                                System.out.println("nbr = " + nbr);
-
-                                listeWithScroll.addView(film_tmp);
-                            }
-                        }
-                    } else {
-                        break;
+                    try {
+                        result = Ion.with(c)
+                                .load("https://api.themoviedb.org/3/movie/popular?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=" + page)
+                                .asJsonObject()
+                                .get();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
 
-                    bool_genre = false;
+                    boolean bool_genre = false;
+                    final Map<String, Integer> map = new HashMap<>();
 
+                    try {
+                        JSONObject reader = new JSONObject(result.toString());
+                        JSONArray resultats = reader.getJSONArray("results");
+
+                        if( resultats != null ){
+
+                            for (int j = 0; j < resultats.length(); j++) {
+                                final JSONObject json = resultats.getJSONObject(j);
+
+                                if (nbr < nombre_resultat) {
+
+                                    JSONArray genres = json.getJSONArray("genre_ids");
+
+                                    for (int k = 0; k < genres.length(); k++) {
+                                        int id = genres.getInt(k);
+                                        if (genre_film == id) {
+                                            bool_genre = true;
+                                        }
+                                    }
+
+                                    String date = json.getString("release_date");
+                                    String year = date.replaceAll("-\\d{2}-\\d{2}", "");
+
+                                    if( !year.equals("") ){
+                                        if (Integer.valueOf(year).equals(Integer.valueOf(date_sortie))) {
+                                            if (bool_genre) {
+
+                                                map.put(json.getString("title"), json.getInt("id"));
+
+                                                final TextView film_tmp = new TextView(c);
+                                                film_tmp.setText(json.getString("title"));
+                                                film_tmp.setPadding(10, 40, 0, 0);
+                                                film_tmp.setTextSize(30);
+
+                                                nbr++;
+
+                                                film_tmp.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        try {
+                                                            Intent details = new Intent(getApplicationContext(), ThirdActivity.class);
+                                                            details.putExtra("film", map.get(json.getString("title")));
+                                                            startActivity(details);
+
+                                                        } catch (JSONException e1) {
+                                                            e1.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+
+                                                runOnUiThread(new Runnable() {
+
+                                                    public void run() {
+                                                        listeWithScroll.addView(film_tmp);
+                                                    }
+
+                                                });
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    break;
+                                }
+
+                                bool_genre = false;
+
+                            }
+                        }
+
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
                 }
-
-            } catch (JSONException e1) {
-                e1.printStackTrace();
             }
-        }
+
+        }).start();
 
     }
 }
