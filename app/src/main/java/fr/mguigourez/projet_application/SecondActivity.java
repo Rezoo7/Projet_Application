@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import org.json.JSONArray;
@@ -18,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -38,83 +38,93 @@ public class SecondActivity extends AppCompatActivity {
         /************** INITIALISATION *************/
 
         final Context c = this;
-        int page = 1;
+        int page = 0;
+        int nbr = 0;
 
+        while( nbr < nombre_resultat ) {
 
-        Ion.with(c)
-                .load("https://api.themoviedb.org/3/movie/popular?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=" + page)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
+            page++;
 
-                        boolean bool_genre = false;
-                        int nbr=0;
-                        final Map<String, Integer> map = new HashMap<>();
+            JsonObject result = null;
 
-                        try {
-                            JSONObject reader = new JSONObject(result.toString());
-                            JSONArray resultats = reader.getJSONArray("results");
+            try {
+                result = Ion.with(c)
+                        .load("https://api.themoviedb.org/3/movie/popular?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=" + page)
+                        .asJsonObject()
+                        .get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-                            for (int j = 0; j < resultats.length(); j++) {
-                                final JSONObject json = resultats.getJSONObject(j);
+            boolean bool_genre = false;
+            final Map<String, Integer> map = new HashMap<>();
 
-                                JSONArray genres = json.getJSONArray("genre_ids");
+            try {
+                JSONObject reader = new JSONObject(result.toString());
+                JSONArray resultats = reader.getJSONArray("results");
 
-                                for (int k = 0; k < genres.length(); k++) {
-                                    int id = genres.getInt(k);
-                                    if (genre_film == id) {
-                                        bool_genre = true;
-                                    }
-                                }
+                for (int j = 0; j < resultats.length(); j++) {
+                    final JSONObject json = resultats.getJSONObject(j);
 
-                                String date = json.getString("release_date");
-                                String year = date.replaceAll("-\\d{2}-\\d{2}", "");
+                    if (nbr < nombre_resultat) {
 
-                                if (Integer.valueOf(year) >= Integer.valueOf(date_sortie)) {
-                                    if (bool_genre) {
+                        JSONArray genres = json.getJSONArray("genre_ids");
 
-                                        map.put(json.getString("title"), json.getInt("id"));
+                        for (int k = 0; k < genres.length(); k++) {
+                            int id = genres.getInt(k);
+                            if (genre_film == id) {
+                                bool_genre = true;
+                            }
+                        }
 
-                                        final TextView film_tmp = new TextView(c);
-                                        film_tmp.setText(json.getString("title"));
-                                        film_tmp.setTextSize(30);
+                        String date = json.getString("release_date");
+                        String year = date.replaceAll("-\\d{2}-\\d{2}", "");
 
-                                        nbr++;
+                        if (Integer.valueOf(year).equals(Integer.valueOf(date_sortie))) {
+                            if (bool_genre) {
 
-                                        film_tmp.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                try {
-                                                    Intent details = new Intent(getApplicationContext(), ThirdActivity.class);
-                                                    details.putExtra("film", map.get(json.getString("title")));
-                                                    startActivity(details);
+                                map.put(json.getString("title"), json.getInt("id"));
 
-                                                } catch (JSONException e1) {
-                                                    e1.printStackTrace();
-                                                }
-                                            }
-                                        });
+                                final TextView film_tmp = new TextView(c);
+                                film_tmp.setText(json.getString("title"));
+                                film_tmp.setPadding(10, 40, 0, 0);
+                                film_tmp.setTextSize(30);
 
-                                        System.out.println("Nombre resultats : " + nombre_resultat);
-                                        System.out.println("nbr = "+nbr);
+                                nbr++;
 
-                                        if(nbr < nombre_resultat) {
-                                            System.out.println("bon");
-                                            listeWithScroll.addView(film_tmp);
+                                film_tmp.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            Intent details = new Intent(getApplicationContext(), ThirdActivity.class);
+                                            details.putExtra("film", map.get(json.getString("title")));
+                                            startActivity(details);
+
+                                        } catch (JSONException e1) {
+                                            e1.printStackTrace();
                                         }
                                     }
-                                }
+                                });
 
-                                bool_genre = false;
+                                System.out.println("nbr = " + nbr);
 
+                                listeWithScroll.addView(film_tmp);
                             }
-
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
                         }
+                    } else {
+                        break;
                     }
-                });
+
+                    bool_genre = false;
+
+                }
+
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+        }
 
     }
 }

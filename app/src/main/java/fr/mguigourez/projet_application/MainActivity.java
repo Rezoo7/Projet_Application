@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.mguigourez.projet_application.Listeners.BarNombrePagesListener;
-
 public class MainActivity extends AppCompatActivity {
 
     private AutoCompleteTextView studio;
@@ -50,8 +48,32 @@ public class MainActivity extends AppCompatActivity {
         this.affichageR = findViewById(R.id.affichage_resultats);
         final ImageButton search = findViewById(R.id.recherche);
 
-        this.nombreR.setMax(150);
-        this.nombreR.setOnSeekBarChangeListener(new BarNombrePagesListener(this.affichageR));
+        this.nombreR.setMax(100);
+        affichageR.setText("5");
+
+        this.nombreR.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar bs, int progress, boolean fromUser)
+            {
+                if( progress < 5 ){
+                    progress = 5;
+                }
+
+                affichageR.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+        });
 
         /* -------------------  GET DATA ----------------------- */
 
@@ -138,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                                     String da = date.getSelectedItem().toString();
                                     String gen = genre.getSelectedItem().toString();
                                     int nb = nombreR.getProgress();
+                                    if( nb < 5 ){ nb = 5; }
 
                                     Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
                                     resultats.putExtra("studio", stu);
