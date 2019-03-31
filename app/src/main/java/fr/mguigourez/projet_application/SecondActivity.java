@@ -76,6 +76,7 @@ public class SecondActivity extends AppCompatActivity {
 
                                         final TextView film_tmp = new TextView(c);
                                         film_tmp.setText(json.getString("title"));
+                                        film_tmp.setTextSize(30);
 
                                         film_tmp.setOnClickListener(new View.OnClickListener() {
                                             @Override
