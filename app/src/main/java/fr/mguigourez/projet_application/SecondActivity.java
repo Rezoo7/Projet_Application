@@ -40,6 +40,7 @@ public class SecondActivity extends AppCompatActivity {
         final Context c = this;
         int page = 1;
 
+
         Ion.with(c)
                 .load("https://api.themoviedb.org/3/movie/popular?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=" + page)
                 .asJsonObject()
@@ -48,6 +49,7 @@ public class SecondActivity extends AppCompatActivity {
                     public void onCompleted(Exception e, JsonObject result) {
 
                         boolean bool_genre = false;
+                        int nbr=0;
                         final Map<String, Integer> map = new HashMap<>();
 
                         try {
@@ -78,6 +80,8 @@ public class SecondActivity extends AppCompatActivity {
                                         film_tmp.setText(json.getString("title"));
                                         film_tmp.setTextSize(30);
 
+                                        nbr++;
+
                                         film_tmp.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
@@ -92,8 +96,13 @@ public class SecondActivity extends AppCompatActivity {
                                             }
                                         });
 
-                                        listeWithScroll.addView(film_tmp);
+                                        System.out.println("Nombre resultats : " + nombre_resultat);
+                                        System.out.println("nbr = "+nbr);
 
+                                        if(nbr < nombre_resultat) {
+                                            System.out.println("bon");
+                                            listeWithScroll.addView(film_tmp);
+                                        }
                                     }
                                 }
 
