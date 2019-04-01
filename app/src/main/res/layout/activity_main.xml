@@ -19,25 +19,25 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/note"
+        android:id="@+id/film"
         android:layout_width="110dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="50dp"
-        android:text="Studio :"
+        android:text="Film :"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <AutoCompleteTextView
-        android:id="@+id/studio"
+        android:id="@+id/nom_film"
         android:layout_width="170dp"
         android:layout_height="40dp"
         android:layout_marginStart="45dp"
         android:layout_marginLeft="45dp"
         android:layout_marginTop="50dp"
-        app:layout_constraintStart_toEndOf="@+id/note"
+        app:layout_constraintStart_toEndOf="@+id/film"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
@@ -50,7 +50,7 @@
         android:text="Date : "
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/note" />
+        app:layout_constraintTop_toBottomOf="@+id/film" />
 
     <Spinner
         android:id="@+id/date"
@@ -61,7 +61,7 @@
         android:layout_marginTop="40dp"
         android:inputType="number"
         app:layout_constraintStart_toEndOf="@+id/Datetext"
-        app:layout_constraintTop_toBottomOf="@+id/studio" />
+        app:layout_constraintTop_toBottomOf="@+id/nom_film" />
 
     <TextView
         android:id="@+id/Genretext"

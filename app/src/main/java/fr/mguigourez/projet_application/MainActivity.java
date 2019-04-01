@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -29,7 +31,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AutoCompleteTextView studio;
+    private AutoCompleteTextView film;
     private Spinner date;
     private Spinner genre;
     private SeekBar nombreR;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.studio = findViewById(R.id.studio);
+        this.film = findViewById(R.id.nom_film);
         this.date = findViewById(R.id.date);
         this.genre = findViewById(R.id.genre);
         this.nombreR = findViewById(R.id.nombre_resultats);
@@ -51,12 +53,10 @@ public class MainActivity extends AppCompatActivity {
         this.nombreR.setMax(100);
         affichageR.setText("5");
 
-        this.nombreR.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
-        {
+        this.nombreR.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar bs, int progress, boolean fromUser)
-            {
-                if( progress < 5 ){
+            public void onProgressChanged(SeekBar bs, int progress, boolean fromUser) {
+                if (progress < 5) {
                     progress = 5;
                 }
 
@@ -83,38 +83,72 @@ public class MainActivity extends AppCompatActivity {
 
         /************** STUDIO *************/
 
-        final String[] STUDIO = new String[]{
-                "Warner Bros",
-                "Sony Pictures Motion Picture Group",
-                "Walt Disney Studios",
-                "Universal Pictures",
-                "20th Century Fox",
-                "Paramount Pictures",
-                "Lionsgate Films",
-                "The Weinstein Company",
-                "Paramount Pictures Corporation",
-                "MTV Films",
-                "DC Entertainment",
-                "New Line Cinema",
-                "Home Box Office",
-                "Castle Rock Entertainment",
-                "Blue Sky Studios Inc.",
-                "Columbia Pictures",
-                "Screen Gems",
-                "TriStar",
-                "Pixar Animation Studios",
-                "Marvel Entertainment",
-                "Lucasfilm Limited",
-        };
+        film.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, STUDIO);
-        studio.setAdapter(adapter);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+                film.clearListSelection();
+
+                String film_search = film.getText().toString();
+
+                Ion.with(c)
+                        .load("https://api.themoviedb.org/3/search/movie?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=1&query=" + film_search)
+                        .asJsonObject()
+                        .setCallback(new FutureCallback<JsonObject>() {
+                            @Override
+                            public void onCompleted(Exception e, JsonObject result) {
+
+                                try {
+                                    JSONObject reader = null;
+                                    reader = new JSONObject(result.toString());
+
+                                    JSONArray resultats = reader.getJSONArray("results");
+
+                                    if (resultats != null) {
+
+                                        String[] films = new String[resultats.length()];
+
+                                        for (int i = 0; i < resultats.length(); i++) {
+
+                                            JSONObject json = null;
+                                            json = resultats.getJSONObject(i);
+                                            films[i] = json.getString("title");
+                                        }
+
+
+                                        ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, films);
+                                        film.setAdapter(adapter);
+
+                                    }
+
+                                } catch (JSONException e1) {
+                                    e1.printStackTrace();
+                                }
+
+                            }
+
+                        });
+            }
+        });
 
         /************** DATE *************/
 
         List<String> list = new ArrayList<>();
 
-        for (int i = 2019; i > 1950; i--) {
+        for (
+                int i = 2019;
+                i > 1950; i--) {
             list.add(String.valueOf(i));
         }
 
@@ -142,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < genres.length(); i++) {
                                 JSONObject json = genres.getJSONObject(i);
                                 list_genre.add(json.getString("name"));
-                                map.put( json.getString("name"), json.getInt("id") );
+                                map.put(json.getString("name"), json.getInt("id"));
                             }
 
                             final Map<String, Integer> finalMap = map;
@@ -156,16 +190,18 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
 
-                                    String stu = studio.getText().toString();
+                                    String fil = film.getText().toString();
                                     String da = date.getSelectedItem().toString();
                                     String gen = genre.getSelectedItem().toString();
                                     int nb = nombreR.getProgress();
-                                    if( nb < 5 ){ nb = 5; }
+                                    if (nb < 5) {
+                                        nb = 5;
+                                    }
 
                                     Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
-                                    resultats.putExtra("studio", stu);
+                                    resultats.putExtra("film", fil);
                                     resultats.putExtra("date", da);
-                                    resultats.putExtra("genre", finalMap.get(gen) );
+                                    resultats.putExtra("genre", finalMap.get(gen));
                                     resultats.putExtra("nombre", nb);
                                     startActivity(resultats);
 
