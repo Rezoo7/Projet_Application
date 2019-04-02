@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AutoCompleteTextView film;
+    private AutoCompleteTextView studio;
     private Spinner date;
     private Spinner genre;
     private SeekBar nombreR;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.film = findViewById(R.id.nom_film);
+        this.studio = findViewById(R.id.nom_studio);
         this.date = findViewById(R.id.date);
         this.genre = findViewById(R.id.genre);
         this.nombreR = findViewById(R.id.nombre_resultats);
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         /************** STUDIO *************/
 
-        film.addTextChangedListener(new TextWatcher() {
+        studio.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -97,43 +97,43 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
+                studio.clearListSelection();
 
-                film.clearListSelection();
-
-                String film_search = film.getText().toString();
+                final String studio_search = studio.getText().toString();
+                // final Map<String, Integer> map = new HashMap<>();
 
                 Ion.with(c)
-                        .load("https://api.themoviedb.org/3/search/movie?api_key=d9d52bd9b5ead14f7d1feb2111e99354&page=1&query=" + film_search)
+                        .load("https://api.themoviedb.org/3/search/company?api_key=d9d52bd9b5ead14f7d1feb2111e99354&query=" + studio_search)
                         .asJsonObject()
                         .setCallback(new FutureCallback<JsonObject>() {
                             @Override
                             public void onCompleted(Exception e, JsonObject result) {
 
-                                try {
-                                    JSONObject reader = null;
-                                    reader = new JSONObject(result.toString());
+                                if (result != null) {
 
-                                    JSONArray resultats = reader.getJSONArray("results");
+                                    try {
+                                        JSONObject reader = new JSONObject(result.toString());
 
-                                    if (resultats != null) {
+                                        JSONArray resultats = reader.getJSONArray("results");
 
-                                        String[] films = new String[resultats.length()];
+                                        if (resultats != null) {
 
-                                        for (int i = 0; i < resultats.length(); i++) {
+                                            String[] studios = new String[resultats.length()];
 
-                                            JSONObject json = null;
-                                            json = resultats.getJSONObject(i);
-                                            films[i] = json.getString("title");
+                                            for (int i = 0; i < resultats.length(); i++) {
+
+                                                JSONObject json = resultats.getJSONObject(i);
+                                                studios[i] = json.getString("name");
+                                            }
+
+                                            ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, studios);
+                                            studio.setAdapter(adapter);
                                         }
 
-
-                                        ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, films);
-                                        film.setAdapter(adapter);
-
+                                    } catch (JSONException e1) {
+                                        e1.printStackTrace();
                                     }
 
-                                } catch (JSONException e1) {
-                                    e1.printStackTrace();
                                 }
 
                             }
@@ -146,9 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> list = new ArrayList<>();
 
-        for (
-                int i = 2019;
-                i > 1950; i--) {
+        for (int i = 2019; i > 1950; i--) {
             list.add(String.valueOf(i));
         }
 
@@ -170,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
 
-                            JSONObject reader = new JSONObject(result.toString());
+                            final JSONObject reader = new JSONObject(result.toString());
                             JSONArray genres = reader.getJSONArray("genres");
 
                             for (int i = 0; i < genres.length(); i++) {
@@ -190,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
 
-                                    String fil = film.getText().toString();
+                                    String stu = studio.getText().toString();
                                     String da = date.getSelectedItem().toString();
                                     String gen = genre.getSelectedItem().toString();
                                     int nb = nombreR.getProgress();
@@ -199,14 +197,13 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
-                                    resultats.putExtra("film", fil);
+                                    resultats.putExtra("studio", stu);
                                     resultats.putExtra("date", da);
                                     resultats.putExtra("genre", finalMap.get(gen));
                                     resultats.putExtra("nombre", nb);
                                     startActivity(resultats);
 
                                 }
-
                             });
 
                         } catch (JSONException e1) {

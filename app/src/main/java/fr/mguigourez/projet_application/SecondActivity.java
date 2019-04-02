@@ -30,7 +30,7 @@ public class SecondActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        final String nom_film = intent.getStringExtra("film");
+        final String nom_studio = intent.getStringExtra("studio");
         final String date_sortie = intent.getStringExtra("date");
         final int genre_film = intent.getIntExtra("genre", 0);
         final int nombre_resultat = intent.getIntExtra("nombre", 0);
@@ -38,8 +38,10 @@ public class SecondActivity extends AppCompatActivity {
         /************** INITIALISATION *************/
 
         final Context c = this;
-        int nbr = 1;
+        int nbr = 0;
         int page = 0;
+        int last_nombre = 0;
+        int timeout = 0;
 
         while( nbr < nombre_resultat ) {
 
@@ -47,7 +49,7 @@ public class SecondActivity extends AppCompatActivity {
 
             try {
                 JsonObject result = Ion.with(c)
-                        .load("https://api.themoviedb.org/3/discover/movie?api_key=d9d52bd9b5ead14f7d1feb2111e99354&release_date.gte=" + date_sortie + "&with_genres=" + genre_film + "&sort_by=popularity.desc&page=" + page)
+                        .load("https://api.themoviedb.org/3/discover/movie?api_key=d9d52bd9b5ead14f7d1feb2111e99354&with_companies=" + nom_studio + "&primary_release_year=" + date_sortie + "&with_genres=" + genre_film + "&sort_by=popularity.desc&page=" + page)
                         .asJsonObject()
                         .get();
 
@@ -106,6 +108,16 @@ public class SecondActivity extends AppCompatActivity {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+
+            if( nbr == last_nombre ){
+                timeout++;
+                if( timeout == 10 ){
+                    break;
+                }
+            } else {
+                timeout = 0;
+                last_nombre = nbr;
             }
 
         }
