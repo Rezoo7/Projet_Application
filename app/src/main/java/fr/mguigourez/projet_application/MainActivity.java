@@ -25,9 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -99,46 +98,50 @@ public class MainActivity extends AppCompatActivity {
 
                 studio.clearListSelection();
 
-                final String studio_search = studio.getText().toString();
-                // final Map<String, Integer> map = new HashMap<>();
+                String studio_search = studio.getText().toString();
 
-                Ion.with(c)
-                        .load("https://api.themoviedb.org/3/search/company?api_key=d9d52bd9b5ead14f7d1feb2111e99354&query=" + studio_search)
-                        .asJsonObject()
-                        .setCallback(new FutureCallback<JsonObject>() {
-                            @Override
-                            public void onCompleted(Exception e, JsonObject result) {
+                if( !studio_search.isEmpty() ) {
 
-                                if (result != null) {
+                    studio_search = studio_search.replaceAll(" ", "%20");
 
-                                    try {
-                                        JSONObject reader = new JSONObject(result.toString());
+                    Ion.with(c)
+                            .load("https://api.themoviedb.org/3/search/company?api_key=d9d52bd9b5ead14f7d1feb2111e99354&query=" + studio_search)
+                            .asJsonObject()
+                            .setCallback(new FutureCallback<JsonObject>() {
+                                @Override
+                                public void onCompleted(Exception e, JsonObject result) {
 
-                                        JSONArray resultats = reader.getJSONArray("results");
+                                    if (result != null) {
 
-                                        if (resultats != null) {
+                                        try {
+                                            JSONObject reader = new JSONObject(result.toString());
 
-                                            String[] studios = new String[resultats.length()];
+                                            JSONArray resultats = reader.getJSONArray("results");
 
-                                            for (int i = 0; i < resultats.length(); i++) {
+                                            if (resultats != null) {
 
-                                                JSONObject json = resultats.getJSONObject(i);
-                                                studios[i] = json.getString("name");
+                                                String[] studios = new String[resultats.length()];
+
+                                                for (int i = 0; i < resultats.length(); i++) {
+
+                                                    JSONObject json = resultats.getJSONObject(i);
+                                                    studios[i] = json.getString("name");
+                                                }
+
+                                                ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, studios);
+                                                studio.setAdapter(adapter);
                                             }
 
-                                            ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, studios);
-                                            studio.setAdapter(adapter);
+                                        } catch (JSONException e1) {
+                                            e1.printStackTrace();
                                         }
 
-                                    } catch (JSONException e1) {
-                                        e1.printStackTrace();
                                     }
 
                                 }
 
-                            }
-
-                        });
+                            });
+                }
             }
         });
 
@@ -164,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onCompleted(Exception e, JsonObject result) {
 
                         List<String> list_genre = new ArrayList<>();
-                        Map<String, Integer> map = new HashMap<>();
 
                         try {
 
@@ -174,43 +176,124 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < genres.length(); i++) {
                                 JSONObject json = genres.getJSONObject(i);
                                 list_genre.add(json.getString("name"));
-                                map.put(json.getString("name"), json.getInt("id"));
                             }
-
-                            final Map<String, Integer> finalMap = map;
 
                             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, list_genre);
                             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             genre.setAdapter(dataAdapter);
-
-                            search.setOnClickListener(new View.OnClickListener() {
-
-                                @Override
-                                public void onClick(View v) {
-
-                                    String stu = studio.getText().toString();
-                                    String da = date.getSelectedItem().toString();
-                                    String gen = genre.getSelectedItem().toString();
-                                    int nb = nombreR.getProgress();
-                                    if (nb < 5) {
-                                        nb = 5;
-                                    }
-
-                                    Intent resultats = new Intent(getApplicationContext(), SecondActivity.class);
-                                    resultats.putExtra("studio", stu);
-                                    resultats.putExtra("date", da);
-                                    resultats.putExtra("genre", finalMap.get(gen));
-                                    resultats.putExtra("nombre", nb);
-                                    startActivity(resultats);
-
-                                }
-                            });
 
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
                 });
+
+        /************** RECHERCHE *************/
+
+        search.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                try {
+
+                    JsonObject resultGenre = Ion.with(c)
+                            .load("https://api.themoviedb.org/3/genre/movie/list?api_key=d9d52bd9b5ead14f7d1feb2111e99354")
+                            .asJsonObject()
+                            .get();
+
+                    int gen = 0;
+
+                    try {
+
+                        final JSONObject reader = new JSONObject(resultGenre.toString());
+                        JSONArray genres = reader.getJSONArray("genres");
+
+                        for (int i = 0; i < genres.length(); i++) {
+                            JSONObject json = genres.getJSONObject(i);
+
+                            if(genre.getSelectedItem().toString().equals(json.getString("name"))){
+
+                                gen = json.getInt("id");
+
+                                break;
+
+                            }
+                        }
+
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+
+                    String nomstudio = studio.getText().toString();
+
+                    if( !nomstudio.isEmpty() ) {
+
+                        nomstudio = nomstudio.replaceAll(" ", "%20");
+
+                        JsonObject result = Ion.with(c)
+                                .load("https://api.themoviedb.org/3/search/company?api_key=d9d52bd9b5ead14f7d1feb2111e99354&query=" + nomstudio)
+                                .asJsonObject()
+                                .get();
+
+                        try {
+                            JSONObject reader = new JSONObject(result.toString());
+
+                            JSONArray resultats = reader.getJSONArray("results");
+
+                            if (resultats != null) {
+
+                                if (resultats.length() == 1) {
+
+                                    JSONObject json = resultats.getJSONObject(0);
+
+                                    String stu = json.getString("id");
+                                    String da = date.getSelectedItem().toString();
+                                    int nb = nombreR.getProgress();
+                                    if (nb < 5) {
+                                        nb = 5;
+                                    }
+
+                                    Intent affichageRes = new Intent(getApplicationContext(), SecondActivity.class);
+                                    affichageRes.putExtra("studio", stu);
+                                    affichageRes.putExtra("date", da);
+                                    affichageRes.putExtra("genre", gen);
+                                    affichageRes.putExtra("nombre", nb);
+                                    startActivity(affichageRes);
+
+                                }
+
+                            }
+
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+
+                    } else {
+
+                        String stu = "";
+                        String da = date.getSelectedItem().toString();
+                        int nb = nombreR.getProgress();
+                        if (nb < 5) {
+                            nb = 5;
+                        }
+
+                        Intent affichageRes = new Intent(getApplicationContext(), SecondActivity.class);
+                        affichageRes.putExtra("studio", stu);
+                        affichageRes.putExtra("date", da);
+                        affichageRes.putExtra("genre", gen);
+                        affichageRes.putExtra("nombre", nb);
+                        startActivity(affichageRes);
+
+                    }
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
     }
 }
