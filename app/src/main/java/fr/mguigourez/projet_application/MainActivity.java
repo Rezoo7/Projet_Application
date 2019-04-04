@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String studio_search = studio.getText().toString();
 
-                if( !studio_search.isEmpty() ) {
+                if (!studio_search.isEmpty()) {
 
                     studio_search = studio_search.replaceAll(" ", "%20");
 
@@ -212,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < genres.length(); i++) {
                             JSONObject json = genres.getJSONObject(i);
 
-                            if(genre.getSelectedItem().toString().equals(json.getString("name"))){
+                            if (genre.getSelectedItem().toString().equals(json.getString("name"))) {
 
                                 gen = json.getInt("id");
 
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
                     String nomstudio = studio.getText().toString();
 
-                    if( !nomstudio.isEmpty() ) {
+                    if (!nomstudio.isEmpty()) {
 
                         nomstudio = nomstudio.replaceAll(" ", "%20");
 
@@ -241,29 +242,41 @@ public class MainActivity extends AppCompatActivity {
 
                             JSONArray resultats = reader.getJSONArray("results");
 
-                            if (resultats != null) {
 
-                                if (resultats.length() == 1) {
+                            if (resultats.length() == 1) {
 
-                                    JSONObject json = resultats.getJSONObject(0);
+                                JSONObject json = resultats.getJSONObject(0);
 
-                                    String stu = json.getString("id");
-                                    String da = date.getSelectedItem().toString();
-                                    int nb = nombreR.getProgress();
-                                    if (nb < 5) {
-                                        nb = 5;
-                                    }
-
-                                    Intent affichageRes = new Intent(getApplicationContext(), SecondActivity.class);
-                                    affichageRes.putExtra("studio", stu);
-                                    affichageRes.putExtra("date", da);
-                                    affichageRes.putExtra("genre", gen);
-                                    affichageRes.putExtra("nombre", nb);
-                                    startActivity(affichageRes);
-
+                                String stu = json.getString("id");
+                                String da = date.getSelectedItem().toString();
+                                int nb = nombreR.getProgress();
+                                if (nb < 5) {
+                                    nb = 5;
                                 }
 
+                                Intent affichageRes = new Intent(getApplicationContext(), SecondActivity.class);
+                                affichageRes.putExtra("studio", stu);
+                                affichageRes.putExtra("date", da);
+                                affichageRes.putExtra("genre", gen);
+                                affichageRes.putExtra("nombre", nb);
+                                startActivity(affichageRes);
+
+                            } else if (resultats.length() == 0) {
+
+                                AlertDialog.Builder ErrorMsg = new AlertDialog.Builder(c);
+                                ErrorMsg.setMessage("Nom de studio inconnu. Veuillez en choisir un correct.").setTitle("Erreur");
+                                ErrorMsg.create();
+                                ErrorMsg.show();
+
+                            } else {
+
+                                AlertDialog.Builder ErrorMsg = new AlertDialog.Builder(c);
+                                ErrorMsg.setMessage("Plusieurs noms de studio correspondent à votre recherche, veuillez choisir un nom de studio unique.").setTitle("Erreur");
+                                ErrorMsg.create();
+                                ErrorMsg.show();
+
                             }
+
 
                         } catch (JSONException e1) {
                             e1.printStackTrace();
