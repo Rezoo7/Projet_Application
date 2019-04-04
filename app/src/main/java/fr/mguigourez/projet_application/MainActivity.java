@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner genre;
     private SeekBar nombreR;
     private TextView affichageR;
+    private AutoCompleteTextView movie;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -48,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
         this.genre = findViewById(R.id.genre);
         this.nombreR = findViewById(R.id.nombre_resultats);
         this.affichageR = findViewById(R.id.affichage_resultats);
+        this.movie = findViewById(R.id.nom_film);
         final ImageButton search = findViewById(R.id.recherche);
+        final ImageButton searchMovie = findViewById(R.id.recherche2);
 
         this.nombreR.setMax(100);
         affichageR.setText("5");
@@ -77,11 +80,94 @@ public class MainActivity extends AppCompatActivity {
 
         /* -------------------  GET DATA ----------------------- */
 
-        /************** INITIALISATION *************/
+        /* ************* INITIALISATION ************ */
 
         final Context c = this;
 
-        /************** STUDIO *************/
+        /* ************* NAME ************ */
+
+        movie.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                movie.clearListSelection();
+
+                String movie_search = movie.getText().toString();
+
+                if (!movie_search.isEmpty()) {
+
+                    movie_search = movie_search.replaceAll(" ", "%20");
+
+                    Ion.with(c)
+                            .load("https://api.themoviedb.org/3/search/movie?api_key=d9d52bd9b5ead14f7d1feb2111e99354&query=" + movie_search)
+                            .asJsonObject()
+                            .setCallback(new FutureCallback<JsonObject>() {
+                                @Override
+                                public void onCompleted(Exception e, JsonObject result) {
+
+                                    if (result != null) {
+
+                                        try {
+                                            JSONObject reader = new JSONObject(result.toString());
+
+                                            JSONArray resultats = reader.getJSONArray("results");
+
+                                            if (resultats != null) {
+
+                                                String[] movies = new String[resultats.length()];
+
+                                                for (int i = 0; i < resultats.length(); i++) {
+
+                                                    JSONObject json = resultats.getJSONObject(i);
+                                                    movies[i] = json.getString("title");
+                                                }
+
+                                                ArrayAdapter<String> adapter = new ArrayAdapter<>(c, android.R.layout.simple_dropdown_item_1line, movies);
+                                                movie.setAdapter(adapter);
+                                            }
+
+                                        } catch (JSONException e1) {
+                                            e1.printStackTrace();
+                                        }
+
+                                    }
+
+                                }
+
+                            });
+                }
+            }
+        });
+
+        searchMovie.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                String stu = "null";
+                String mov = movie.getText().toString();
+
+                Intent affichageRes = new Intent(getApplicationContext(), SecondActivity.class);
+                affichageRes.putExtra("studio", stu);
+                affichageRes.putExtra("movie", mov);
+                startActivity(affichageRes);
+
+            }
+
+        });
+
+
+        /* ************* STUDIO ************ */
 
         studio.addTextChangedListener(new TextWatcher() {
             @Override
@@ -146,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /************** DATE *************/
+        /* ************* DATE ************ */
 
         List<String> list = new ArrayList<>();
 
@@ -158,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         date.setAdapter(dataAdapter);
 
-        /************** GENRE *************/
+        /* ************* GENRE ************ */
 
         Ion.with(c)
                 .load("https://api.themoviedb.org/3/genre/movie/list?api_key=d9d52bd9b5ead14f7d1feb2111e99354")
@@ -189,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        /************** RECHERCHE *************/
+        /* ************* RECHERCHE ************ */
 
         search.setOnClickListener(new View.OnClickListener() {
 

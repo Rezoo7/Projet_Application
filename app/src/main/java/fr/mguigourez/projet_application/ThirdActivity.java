@@ -39,7 +39,7 @@ public class ThirdActivity extends AppCompatActivity {
         final TextView movie_date = findViewById(R.id.date_film);
         final TextView movie_genre = findViewById(R.id.list_genre);
 
-        /************** INITIALISATION *************/
+        /* ************* INITIALISATION ************ */
 
         final Context c = this;
 
@@ -47,7 +47,7 @@ public class ThirdActivity extends AppCompatActivity {
 
         final int id = intent.getIntExtra("film", 0 );
 
-        /************** DATAS *************/
+        /* ************* DATAS ************ */
 
         Ion.with(c)
                 .load("https://api.themoviedb.org/3/movie/" + String.valueOf(id) + "?api_key=d9d52bd9b5ead14f7d1feb2111e99354")
