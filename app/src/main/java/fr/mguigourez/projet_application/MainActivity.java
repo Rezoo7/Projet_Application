@@ -154,13 +154,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String stu = "null";
                 String mov = movie.getText().toString();
 
-                Intent affichageRes = new Intent(getApplicationContext(), SecondActivity.class);
-                affichageRes.putExtra("studio", stu);
-                affichageRes.putExtra("movie", mov);
-                startActivity(affichageRes);
+                if( !mov.equals("") ){
+
+                    String stu = "null";
+
+                    Intent affichageRes = new Intent(getApplicationContext(), SecondActivity.class);
+                    affichageRes.putExtra("studio", stu);
+                    affichageRes.putExtra("movie", mov);
+                    startActivity(affichageRes);
+
+                } else {
+
+                    AlertDialog.Builder ErrorMsg = new AlertDialog.Builder(c);
+                    ErrorMsg.setMessage("Vous devez tapez un nom de film pour lancer la recherche.").setTitle("Erreur");
+                    ErrorMsg.create();
+                    ErrorMsg.show();
+
+                }
 
             }
 
